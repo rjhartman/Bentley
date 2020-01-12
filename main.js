@@ -3,7 +3,14 @@ const { RichEmbed } = require("discord.js");
 const { CommandoClient, SQLiteProvider } = require("discord.js-commando");
 const path = require("path");
 const sqlite = require("sqlite");
-const token = process.env.TOKEN;
+const args = process.argv.slice(2);
+var token = "";
+
+if (args[0] == "dev") {
+  token = process.env.DEV_TOKEN;
+} else {
+  token = process.env.TOKEN;
+}
 const client = new CommandoClient({
   owner: process.env.OWNER_ID,
   unknownCommandResponse: false,
@@ -38,27 +45,36 @@ client.setProvider(
 
 client.login(token);
 
+var messageLogsChannel = client.channels.find("name", "chat-logs");
 client.on("ready", () => {
   console.info(`Logged in as ${client.user.tag}`);
   client.user.setPresence({
     status: "online",
     game: { name: "with consciousness" }
   });
+  messageLogsChannel = client.channels.find("name", "message-logs");
+  console.log(`Message logs channel: ${messageLogsChannel}`);
 });
 
 client.on("messageDelete", msg => {
-  embed = new RichEmbed()
-    .setColor("#FFE800")
-    .setTitle("Deleted Message")
-    .setAuthor(msg.author.tag, msg.author.avatarURL)
-    .setDescription(msg.content);
-  if (msg.attachments) {
-    msg.attachments.forEach(attachment => {
-      embed.addField("Attachment", attachment.url);
-    });
-    embed.addField("Date:", new Date(), true);
+  if (chatLogsChannel) {
+    embed = new RichEmbed()
+      .setColor("#FFE800")
+      .setTitle("Deleted Message")
+      .setAuthor(msg.author.tag, msg.author.avatarURL)
+      .setDescription(msg.content);
+    if (msg.attachments) {
+      msg.attachments.forEach(attachment => {
+        embed.addField("Attachment", attachment.url);
+      });
+      embed.addField("Date:", new Date(), true);
+    }
+    messageLogsChannel.send(embed);
+  } else {
+    console.error(
+      `ERROR: Couldn't log deleted message by ${msg.author.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
+    );
   }
-  msg.channel.send(embed);
 });
 
 client.on("message", msg => {
@@ -77,7 +93,8 @@ client.on("message", msg => {
       msg.author.send(embed);
     });
   }
-  if (msg.content == "shutdown") {
+  if (msg.content == "!shutdown") {
+    msg.author.send("Shutting down.");
     client.destroy();
   }
 });

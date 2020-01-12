@@ -7,6 +7,7 @@ module.exports = class SayCommand extends Command {
       memberName: "purge",
       description: "Purges a given number of messages.",
       examples: ["purge 10 (deletes last 10 messages)"],
+      userPermissions: ["MANAGE_MESSAGES"],
       args: [
         {
           key: "number",
