@@ -77,4 +77,7 @@ client.on("message", msg => {
       msg.author.send(embed);
     });
   }
+  if (msg.content == "shutdown") {
+    client.destroy();
+  }
 });
