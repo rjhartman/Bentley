@@ -98,3 +98,22 @@ client.on("message", msg => {
     client.destroy();
   }
 });
+
+client.on("userUpdate", (oldUser, newUser) => {
+  if (oldUser.avatarURL != newUser.avatarURL) {
+    if (messageLogsChannel) {
+      embed = new RichEmbed()
+        .setColor("#00A3DB")
+        .setTitle(`Profile Picture Change`)
+        .setAuthor(newUser.tag, newUser.avatarURL)
+        .setThumbnail(oldUser.avatarURL)
+        .setImage(newUser.avatarURL)
+        .addField("Date:", new Date(), true);
+      messageLogsChannel.send(embed);
+    } else {
+      console.error(
+        `ERROR: Couldn't log deleted message by ${msg.author.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
+      );
+    }
+  }
+});
