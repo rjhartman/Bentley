@@ -53,14 +53,14 @@ client.on("ready", () => {
     game: { name: "with consciousness" }
   });
   messageLogsChannel = client.channels.find("name", "message-logs");
-  console.log(`Message logs channel: ${messageLogsChannel}`);
+  console.log(`Message logs channel: ${messageLogsChannel.name}`);
 });
 
 client.on("messageDelete", msg => {
-  if (chatLogsChannel) {
+  if (messageLogsChannel) {
     embed = new RichEmbed()
       .setColor("#FFE800")
-      .setTitle("Deleted Message")
+      .setTitle(`Deleted Message in #${msg.channel.name}`)
       .setAuthor(msg.author.tag, msg.author.avatarURL)
       .setDescription(msg.content);
     if (msg.attachments) {
