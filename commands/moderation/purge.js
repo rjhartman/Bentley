@@ -28,14 +28,19 @@ module.exports = class SayCommand extends Command {
   }
 
   run(msg, { number }) {
-    msg.delete();
-    msg.channel
-      .bulkDelete(number)
-      .then(messages => {
-        console.info(`Succesfully deleted ${messages.size} messages.`);
-      })
-      .catch(e => {
-        console.error(`Couldn't delete ${number} messages. ${e}`);
-      });
+    if (msg.channel.name != "message-logs") {
+      console.log(msg.channel.name);
+      msg.delete();
+      msg.channel
+        .bulkDelete(number)
+        .then(messages => {
+          console.info(`Succesfully deleted ${messages.size} messages.`);
+        })
+        .catch(e => {
+          console.error(`Couldn't delete ${number} messages. ${e}`);
+        });
+    } else {
+      // Log someone tried to purge in the chatlogs channel!
+    }
   }
 };
