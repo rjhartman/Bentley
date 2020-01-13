@@ -22,6 +22,7 @@ client.registry
     ["help", "Helpful commands"],
     ["mod", "Moderation commands"],
     ["org", "Organization commands"],
+    ["events", "Events related commands"],
     ["other", "Miscellaneous commands"]
   ])
   .registerDefaults()
@@ -48,12 +49,39 @@ client.login(token);
 var messageLogsChannel = client.channels.find("name", "chat-logs");
 client.on("ready", () => {
   console.info(`Logged in as ${client.user.tag}`);
+  module.exports.client = client;
   client.user.setPresence({
     status: "online",
     game: { name: "with consciousness" }
   });
   messageLogsChannel = client.channels.find("name", "message-logs");
-  console.log(`Message logs channel: ${messageLogsChannel.name}`);
+  console.log(`Message logs channel connected`);
+
+  const eventsDataChannel = client.channels.find("name", "events-json");
+  if (eventsDataChannel) {
+    console.log(`Events data channel connected`);
+    module.exports.eventsDataChannel = eventsDataChannel;
+    module.exports.events = [];
+    eventsDataChannel.fetchMessages().then(messages => {
+      messages.forEach(eventMsg => {
+        module.exports.events.push(JSON.parse(eventMsg.content));
+      });
+    });
+  } else {
+    console.log(
+      'Events data channel not found. Make sure Bentley can reach a channel called "events-json"'
+    );
+  }
+
+  const eventsChannel = client.channels.find("name", "events");
+  if (eventsChannel) {
+    console.log(`Events channel connected`);
+    module.exports.eventsChannel = eventsChannel;
+  } else {
+    console.log(
+      'Events channel not found. Make sure Bentley can reach a channel called "events"'
+    );
+  }
 });
 
 client.on("messageDelete", msg => {
@@ -112,7 +140,7 @@ client.on("userUpdate", (oldUser, newUser) => {
       messageLogsChannel.send(embed);
     } else {
       console.error(
-        `ERROR: Couldn't log deleted message by ${msg.author.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
+        `ERROR: Couldn't log profile picture update by ${newUser.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
       );
     }
   }
