@@ -49,17 +49,18 @@ client.login(token);
 
 var messageLogsChannel = client.channels.find("name", "chat-logs");
 client.on("ready", () => {
-  console.info(`Logged in as ${client.user.tag}`);
   module.exports.client = client;
   client.user.setPresence({
     status: "online",
     game: { name: "with consciousness" }
   });
   loadChannels();
+  console.log(`| Logged in as ${client.user.tag}`);
+  console.log("+===============================================");
 });
 
 client.on("messageDelete", msg => {
-  if (messageLogsChannel) {
+  if (exports.messageLogsChannel) {
     embed = new RichEmbed()
       .setColor("#FFE800")
       .setTitle(`Deleted Message in #${msg.channel.name}`)
@@ -69,9 +70,10 @@ client.on("messageDelete", msg => {
       msg.attachments.forEach(attachment => {
         embed.addField("Attachment", attachment.url);
       });
+      embed.setImage(msg.attachments[0]);
       embed.addField("Date:", new Date(), true);
     }
-    messageLogsChannel.send(embed);
+    exports.messageLogsChannel.send(embed);
   } else {
     console.error(
       `ERROR: Couldn't log deleted message by ${msg.author.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
@@ -95,15 +97,11 @@ client.on("message", msg => {
       msg.author.send(embed);
     });
   }
-  if (msg.content == "!shutdown") {
-    msg.author.send("Shutting down.");
-    client.destroy();
-  }
 });
 
 client.on("userUpdate", (oldUser, newUser) => {
   if (oldUser.avatarURL != newUser.avatarURL) {
-    if (messageLogsChannel) {
+    if (exports.messageLogsChannel) {
       embed = new RichEmbed()
         .setColor("#00A3DB")
         .setTitle(`Profile Picture Change`)
@@ -111,7 +109,7 @@ client.on("userUpdate", (oldUser, newUser) => {
         .setThumbnail(oldUser.avatarURL)
         .setImage(newUser.avatarURL)
         .addField("Date:", new Date(), true);
-      messageLogsChannel.send(embed);
+      exports.messageLogsChannel.send(embed);
     } else {
       console.error(
         `ERROR: Couldn't log profile picture update by ${newUser.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`

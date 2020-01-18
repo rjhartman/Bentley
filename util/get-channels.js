@@ -1,12 +1,14 @@
 const bot = require("../main");
 module.exports = function() {
+  console.log("+===============================================");
+  console.log("| Checking for channels...");
   messageLogsChannel = bot.client.channels.find("name", "message-logs");
   bot.messageLogsChannel = messageLogsChannel;
-  console.log(`Message logs channel connected`);
+  console.log(`|    + Message logs channel connected`);
 
   const eventsDataChannel = bot.client.channels.find("name", "events-json");
   if (eventsDataChannel) {
-    console.log(`Events data channel connected`);
+    console.log(`|    + Events data channel connected`);
     bot.eventsDataChannel = eventsDataChannel;
     bot.events = [];
     eventsDataChannel.fetchMessages().then(messages => {
@@ -16,27 +18,28 @@ module.exports = function() {
     });
   } else {
     console.log(
-      'Events data channel not found. Make sure Bentley can reach a channel called "events-json"'
+      '|    - Events data channel not found. Make sure Bentley can reach a channel called "events-json"'
     );
   }
 
   const eventsChannel = bot.client.channels.find("name", "events");
   if (eventsChannel) {
-    console.log(`Events channel connected`);
+    console.log(`|    + Events channel connected`);
     bot.eventsChannel = eventsChannel;
   } else {
     console.log(
-      'Events channel not found. Make sure Bentley can reach a channel called "events"'
+      '|    - Events channel not found. Make sure Bentley can reach a channel called "events"'
     );
   }
 
   const botChannel = bot.client.channels.find("name", "bot_chat");
-  if (eventsChannel) {
-    console.log(`Bot chat channel connected`);
+  if (botChannel) {
+    console.log(`|    + Bot chat channel connected`);
     bot.botChannel = botChannel;
   } else {
     console.log(
-      'Bot chat channel not found. Make sure Bentley can reach a channel called "bot_chat"'
+      '|    - Bot chat channel not found. Make sure Bentley can reach a channel called "bot_chat"'
     );
   }
+  console.log("+===============================================");
 };
