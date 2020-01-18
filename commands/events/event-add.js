@@ -50,8 +50,9 @@ module.exports = class SayCommand extends Command {
     if (eventMaxUsers == -1) {
       eventMaxUsers = null;
     }
+    var uuid = uuid();
     const encodedEvent = {
-      id: uuid(),
+      id: uuid,
       name: eventName,
       desc: eventDesc,
       game: eventGame,
@@ -63,7 +64,8 @@ module.exports = class SayCommand extends Command {
       .setAuthor(msg.author.tag, msg.author.avatarURL)
       .setDescription(eventDesc)
       .addField("Game", eventGame)
-      .addField("Date: ", new Date());
+      .addField("Date: ", new Date())
+      .addField("UUID:", uuid);
     switch (eventGame) {
       case "CS:GO":
         embed.setThumbnail("https://i.redd.it/1s0j5e4fhws01.png");

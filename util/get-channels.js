@@ -6,6 +6,26 @@ module.exports = function() {
   bot.messageLogsChannel = messageLogsChannel;
   console.log(`|    + Message logs channel connected`);
 
+  const nickLogsChannel = bot.client.channels.find("name", "nickname-logs");
+  if (nickLogsChannel) {
+    console.log(`|    + Nickname logs channel connected`);
+    bot.nickLogsChannel = nickLogsChannel;
+  } else {
+    console.log(
+      '|    - Nickname logs channel not found. Make sure Bentley can reach a channel called "nickname-logs"'
+    );
+  }
+
+  const pfpLogsChannel = bot.client.channels.find("name", "pfp-logs");
+  if (pfpLogsChannel) {
+    console.log(`|    + Profile picture logs channel connected`);
+    bot.pfpLogsChannel = pfpLogsChannel;
+  } else {
+    console.log(
+      '|    - Profile picture logs channel not found. Make sure Bentley can reach a channel called "pfp-logs"'
+    );
+  }
+
   const eventsDataChannel = bot.client.channels.find("name", "events-json");
   if (eventsDataChannel) {
     console.log(`|    + Events data channel connected`);

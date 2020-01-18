@@ -35,7 +35,7 @@ sqlite
     client.setProvider(new SQLiteProvider(db));
   })
   .catch(e => {
-    console.error(`Failed to connect sqlite database.`);
+    console.error(`Failed to connect sqlite database. ${e}`);
   });
 
 client.setProvider(
@@ -49,7 +49,8 @@ client.login(token);
 
 var messageLogsChannel = client.channels.find("name", "chat-logs");
 client.on("ready", () => {
-  module.exports.client = client;
+  exports.client = client;
+  exports.permits = [];
   client.user.setPresence({
     status: "online",
     game: { name: "with consciousness" }
@@ -112,7 +113,47 @@ client.on("userUpdate", (oldUser, newUser) => {
       exports.messageLogsChannel.send(embed);
     } else {
       console.error(
-        `ERROR: Couldn't log profile picture update by ${newUser.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
+        `ERROR: Couldn't log profile picture update by ${newUser.tag} because the profile picture logs channel cannot be found. Please make sure Bentley has access to a channel named "pfp-logs".`
+      );
+    }
+  }
+  if (oldUser.username != newUser.username) {
+    if (exports.nickLogsChannel) {
+      embed = new RichEmbed()
+        .setColor("#E400FF")
+        .setTitle(`Nickname change`)
+        .addField("Old:", oldUser.username, true)
+        .addField("New:", newUser.username, true)
+        .setAuthor(newUser.tag, newUser.avatarURL)
+        .addField("Date:", new Date());
+      exports.messageLogsChannel.send(embed);
+    } else {
+      console.error(
+        `ERROR: Couldn't log nickname update by ${newUser.tag} because the nickname logs channel cannot be found. Please make sure Bentley has access to a channel named "nickname-logs".`
+      );
+    }
+  }
+});
+
+client.on("messageUpdate", (oldMsg, newMsg) => {
+  if (oldMsg.content != newMsg.content) {
+    if (exports.messageLogsChannel) {
+      embed = new RichEmbed()
+        .setColor("#FF7C00")
+        .setTitle(`Edited Message in #${newMsg.channel.name}`)
+        .setAuthor(newMsg.author.tag, newMsg.author.avatarURL)
+        .setDescription(newMsg.content);
+      if (newMsg.attachments) {
+        newMsg.attachments.forEach(attachment => {
+          embed.addField("Attachment", attachment.url);
+        });
+        embed.setImage(newMsg.attachments[0]);
+        embed.addField("Date:", new Date(), true);
+      }
+      exports.messageLogsChannel.send(embed);
+    } else {
+      console.error(
+        `ERROR: Couldn't log message edit by ${newUser.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
       );
     }
   }
