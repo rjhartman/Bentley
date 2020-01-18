@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { RichEmbed } = require("discord.js");
 const { CommandoClient, SQLiteProvider } = require("discord.js-commando");
+const loadChannels = require("./util/get-channels");
 const path = require("path");
 const sqlite = require("sqlite");
 const args = process.argv.slice(2);
@@ -54,45 +55,7 @@ client.on("ready", () => {
     status: "online",
     game: { name: "with consciousness" }
   });
-  messageLogsChannel = client.channels.find("name", "message-logs");
-  module.exports.messageLogsChannel = messageLogsChannel;
-  console.log(`Message logs channel connected`);
-
-  const eventsDataChannel = client.channels.find("name", "events-json");
-  if (eventsDataChannel) {
-    console.log(`Events data channel connected`);
-    module.exports.eventsDataChannel = eventsDataChannel;
-    module.exports.events = [];
-    eventsDataChannel.fetchMessages().then(messages => {
-      messages.forEach(eventMsg => {
-        module.exports.events.push(JSON.parse(eventMsg.content));
-      });
-    });
-  } else {
-    console.log(
-      'Events data channel not found. Make sure Bentley can reach a channel called "events-json"'
-    );
-  }
-
-  const eventsChannel = client.channels.find("name", "events");
-  if (eventsChannel) {
-    console.log(`Events channel connected`);
-    module.exports.eventsChannel = eventsChannel;
-  } else {
-    console.log(
-      'Events channel not found. Make sure Bentley can reach a channel called "events"'
-    );
-  }
-
-  const botChannel = client.channels.find("name", "bot_chat");
-  if (eventsChannel) {
-    console.log(`Bot chat channel connected`);
-    module.exports.botChannel = botChannel;
-  } else {
-    console.log(
-      'Bot chat channel not found. Make sure Bentley can reach a channel called "bot_chat"'
-    );
-  }
+  loadChannels();
 });
 
 client.on("messageDelete", msg => {
