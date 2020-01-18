@@ -1,5 +1,6 @@
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
+const randomColor = require("../../util/random-color");
 const uuid = require("uuid/v1");
 const bot = require("../../main");
 module.exports = class SayCommand extends Command {
@@ -57,11 +58,7 @@ module.exports = class SayCommand extends Command {
       maxUsers: eventMaxUsers
     };
     const embed = new RichEmbed()
-      .setColor(
-        "#000000".replace(/0/g, function() {
-          return (~~(Math.random() * 16)).toString(16);
-        })
-      ) // Random color
+      .setColor(randomColor())
       .setTitle(eventName)
       .setAuthor(msg.author.tag, msg.author.avatarURL)
       .setDescription(eventDesc)
@@ -78,6 +75,7 @@ module.exports = class SayCommand extends Command {
         break;
     }
     bot.eventsDataChannel.send(`${JSON.stringify(encodedEvent)}`);
+    bot.events.push(encodedEvent);
     bot.eventsChannel.send(embed);
   }
 };

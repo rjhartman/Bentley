@@ -1,4 +1,6 @@
 const { Command } = require("discord.js-commando");
+const bot = require("../../main");
+
 module.exports = class VibeCheckCommand extends Command {
   constructor(client) {
     super(client, {
@@ -11,15 +13,17 @@ module.exports = class VibeCheckCommand extends Command {
   }
 
   run(msg) {
-    var vibeage = Math.floor(Math.random() * 100);
-    if (vibeage == 0) {
-      return msg.reply(`wow. 0% vibeage. Vibe check failed.`);
-    } else if (vibeage == 100) {
-      return msg.reply(
-        `your vibe meter is at ${vibeage}. You are most definitely vibing.`
-      );
-    } else {
-      return msg.reply(`your vibe meter is at ${vibeage}%`);
+    if (msg.channel == bot.botChannel) {
+      var vibeage = Math.floor(Math.random() * 100);
+      if (vibeage == 0) {
+        return msg.reply(`wow. 0% vibeage. Vibe check failed.`);
+      } else if (vibeage == 100) {
+        return msg.reply(
+          `your vibe meter is at ${vibeage}. You are most definitely vibing.`
+        );
+      } else {
+        return msg.reply(`your vibe meter is at ${vibeage}%`);
+      }
     }
   }
 };

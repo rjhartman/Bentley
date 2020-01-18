@@ -21,7 +21,7 @@ client.registry
   .registerGroups([
     ["help", "Helpful commands"],
     ["mod", "Moderation commands"],
-    ["org", "Organization commands"],
+    ["debug", "Debugging commands"],
     ["events", "Events related commands"],
     ["other", "Miscellaneous commands"]
   ])
@@ -55,6 +55,7 @@ client.on("ready", () => {
     game: { name: "with consciousness" }
   });
   messageLogsChannel = client.channels.find("name", "message-logs");
+  module.exports.messageLogsChannel = messageLogsChannel;
   console.log(`Message logs channel connected`);
 
   const eventsDataChannel = client.channels.find("name", "events-json");
@@ -80,6 +81,16 @@ client.on("ready", () => {
   } else {
     console.log(
       'Events channel not found. Make sure Bentley can reach a channel called "events"'
+    );
+  }
+
+  const botChannel = client.channels.find("name", "bot_chat");
+  if (eventsChannel) {
+    console.log(`Bot chat channel connected`);
+    module.exports.botChannel = botChannel;
+  } else {
+    console.log(
+      'Bot chat channel not found. Make sure Bentley can reach a channel called "bot_chat"'
     );
   }
 });
