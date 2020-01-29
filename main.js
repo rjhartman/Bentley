@@ -158,3 +158,23 @@ client.on("messageUpdate", (oldMsg, newMsg) => {
     }
   }
 });
+
+client.on("guildMemberAdd", newUser => {
+  newUser = newUser.user;
+  embed = new RichEmbed()
+    .setColor("#40ff00")
+    .setTitle(`User Joined`)
+    .setAuthor(newUser.tag, newUser.avatarURL)
+    .addField("Date:", new Date(), true);
+  exports.messageLogsChannel.send(embed);
+});
+
+client.on("guildMemberRemove", oldUser => {
+  oldUser = oldUser.user;
+  embed = new RichEmbed()
+    .setColor("#ff0000")
+    .setTitle(`User Left`)
+    .setAuthor(oldUser.tag, oldUser.avatarURL)
+    .addField("Date:", new Date(), true);
+  exports.messageLogsChannel.send(embed);
+});
