@@ -56,6 +56,7 @@ client.on("ready", () => {
     game: { name: "with consciousness" }
   });
   loadChannels();
+  exports.messageLogsChannel.send("I'm alive!");
   console.log(`| Logged in as ${client.user.tag}`);
   console.log("+===============================================");
 });
