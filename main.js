@@ -111,7 +111,7 @@ client.on("userUpdate", (oldUser, newUser) => {
         .setThumbnail(oldUser.avatarURL)
         .setImage(newUser.avatarURL)
         .addField("Date:", new Date(), true);
-      exports.messageLogsChannel.send(embed);
+      exports.pfpLogsChannel.send(embed);
     } else {
       console.error(
         `ERROR: Couldn't log profile picture update by ${newUser.tag} because the profile picture logs channel cannot be found. Please make sure Bentley has access to a channel named "pfp-logs".`
@@ -122,7 +122,7 @@ client.on("userUpdate", (oldUser, newUser) => {
     if (exports.nickLogsChannel) {
       embed = new RichEmbed()
         .setColor("#E400FF")
-        .setTitle(`Nickname change`)
+        .setTitle(`Username change`)
         .addField("Old:", oldUser.username, true)
         .addField("New:", newUser.username, true)
         .setAuthor(newUser.tag, newUser.avatarURL)
@@ -130,7 +130,23 @@ client.on("userUpdate", (oldUser, newUser) => {
       exports.messageLogsChannel.send(embed);
     } else {
       console.error(
-        `ERROR: Couldn't log nickname update by ${newUser.tag} because the nickname logs channel cannot be found. Please make sure Bentley has access to a channel named "nickname-logs".`
+        `ERROR: Couldn't log username update by ${newUser.tag} because the nickname logs channel cannot be found. Please make sure Bentley has access to a channel named "nickname-logs".`
+      );
+    }
+  }
+  if (oldUser.username != newUser.username) {
+    if (exports.nickLogsChannel) {
+      embed = new RichEmbed()
+        .setColor("#E400FF")
+        .setTitle(`Username change`)
+        .addField("New:", newUser.username, true)
+        .addField("Old:", oldUser.username, true)
+        .setAuthor(newUser.tag, newUser.avatarURL)
+        .addField("Date:", new Date());
+      exports.nickLogsChannel.send(embed);
+    } else {
+      console.error(
+        `ERROR: Couldn't log username update by ${newUser.tag} because the nickname logs channel cannot be found. Please make sure Bentley has access to a channel named "nickname-logs".`
       );
     }
   }
@@ -178,4 +194,17 @@ client.on("guildMemberRemove", oldUser => {
     .setAuthor(oldUser.tag, oldUser.avatarURL)
     .addField("Date:", new Date(), true);
   exports.messageLogsChannel.send(embed);
+});
+
+client.on("guildMemberUpdate", (oldMember, newMember) => {
+  if (oldMember.displayName != newMember.displayName) {
+    embed = new RichEmbed()
+      .setColor("#763ad6")
+      .setTitle(`Nickname change`)
+      .addField("New:", newMember.displayName, true)
+      .addField("Old:", oldMember.displayName, true)
+      .setAuthor(newMember.user.tag, newMember.user.avatarURL)
+      .addField("Date:", new Date());
+    exports.nickLogsChannel.send(embed);
+  }
 });
