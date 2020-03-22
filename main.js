@@ -2,6 +2,7 @@ require("dotenv").config();
 const { RichEmbed } = require("discord.js");
 const { CommandoClient, SQLiteProvider } = require("discord.js-commando");
 const loadChannels = require("./util/get-channels");
+const lightshot = require("./util/lightshot");
 const path = require("path");
 const sqlite = require("sqlite");
 const args = process.argv.slice(2);
@@ -12,6 +13,7 @@ if (args[0] == "dev") {
 } else {
   token = process.env.TOKEN;
 }
+
 const client = new CommandoClient({
   owner: process.env.OWNER_ID,
   unknownCommandResponse: false,
@@ -47,7 +49,6 @@ client.setProvider(
 
 client.login(token);
 
-var messageLogsChannel = client.channels.find("name", "chat-logs");
 client.on("ready", () => {
   exports.client = client;
   exports.permits = [];
@@ -56,7 +57,7 @@ client.on("ready", () => {
     game: { name: "with consciousness" }
   });
   loadChannels();
-  exports.messageLogsChannel.send("I'm alive!");
+  lightshot.init();
   console.log(`| Logged in as ${client.user.tag}`);
   console.log("+===============================================");
 });
@@ -123,22 +124,6 @@ client.on("userUpdate", (oldUser, newUser) => {
       embed = new RichEmbed()
         .setColor("#E400FF")
         .setTitle(`Username change`)
-        .addField("Old:", oldUser.username, true)
-        .addField("New:", newUser.username, true)
-        .setAuthor(newUser.tag, newUser.avatarURL)
-        .addField("Date:", new Date());
-      exports.messageLogsChannel.send(embed);
-    } else {
-      console.error(
-        `ERROR: Couldn't log username update by ${newUser.tag} because the nickname logs channel cannot be found. Please make sure Bentley has access to a channel named "nickname-logs".`
-      );
-    }
-  }
-  if (oldUser.username != newUser.username) {
-    if (exports.nickLogsChannel) {
-      embed = new RichEmbed()
-        .setColor("#E400FF")
-        .setTitle(`Username change`)
         .addField("New:", newUser.username, true)
         .addField("Old:", oldUser.username, true)
         .setAuthor(newUser.tag, newUser.avatarURL)
@@ -159,13 +144,14 @@ client.on("messageUpdate", (oldMsg, newMsg) => {
         .setColor("#FF7C00")
         .setTitle(`Edited Message in #${newMsg.channel.name}`)
         .setAuthor(newMsg.author.tag, newMsg.author.avatarURL)
-        .setDescription(newMsg.content);
+        .addField("New message:", newMsg.content)
+        .addField("Old message:", oldMsg.content);
       if (newMsg.attachments) {
         newMsg.attachments.forEach(attachment => {
           embed.addField("Attachment", attachment.url);
         });
         embed.setImage(newMsg.attachments[0]);
-        embed.addField("Date:", new Date(), true);
+        embed.addField("Date:", new Date());
       }
       exports.messageLogsChannel.send(embed);
     } else {

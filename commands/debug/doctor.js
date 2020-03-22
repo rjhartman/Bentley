@@ -77,7 +77,15 @@ module.exports = class DoctorCommand extends Command {
         'Make sure Bentley can reach a channel called "bot_chat"'
       );
     }
-
+    if (bot.lightshotChannel) {
+      embed.addField(`${successEmote} Lightshot channel connected`, "` `");
+      healthScore++;
+    } else {
+      embed.addField(
+        `${errorEmote} Lightshot channel error`,
+        'Make sure Bentley can reach a channel called "lightshot"'
+      );
+    }
     if (healthScore <= 3) {
       embed.setColor("#E10000").setTitle("Detected Significant Issues");
     } else if (healthScore == 6) {

@@ -61,5 +61,15 @@ module.exports = function() {
       '|    - Bot chat channel not found. Make sure Bentley can reach a channel called "bot_chat"'
     );
   }
+
+  const lightshotChannel = bot.client.channels.find("name", "lightshot");
+  if (botChannel) {
+    console.log(`|    + Lightshot channel connected`);
+    bot.lightshotChannel = lightshotChannel;
+  } else {
+    console.log(
+      '|    - Lightshot channel not found. Make sure Bentley can reach a channel called "lightshot"'
+    );
+  }
   console.log("+===============================================");
 };
