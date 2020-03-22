@@ -64,19 +64,21 @@ client.on("ready", () => {
 
 client.on("messageDelete", msg => {
   if (exports.messageLogsChannel) {
-    embed = new RichEmbed()
-      .setColor("#FFE800")
-      .setTitle(`Deleted Message in #${msg.channel.name}`)
-      .setAuthor(msg.author.tag, msg.author.avatarURL)
-      .setDescription(msg.content);
-    if (msg.attachments) {
-      msg.attachments.forEach(attachment => {
-        embed.addField("Attachment", attachment.url);
-      });
-      embed.setImage(msg.attachments[0]);
-      embed.addField("Date:", new Date(), true);
+    if (msg.author !== client.user) {
+      embed = new RichEmbed()
+        .setColor("#FFE800")
+        .setTitle(`Deleted Message in #${msg.channel.name}`)
+        .setAuthor(msg.author.tag, msg.author.avatarURL)
+        .setDescription(msg.content);
+      if (msg.attachments) {
+        msg.attachments.forEach(attachment => {
+          embed.addField("Attachment", attachment.url);
+        });
+        embed.setImage(msg.attachments[0]);
+        embed.addField("Date:", new Date(), true);
+      }
+      exports.messageLogsChannel.send(embed);
     }
-    exports.messageLogsChannel.send(embed);
   } else {
     console.error(
       `ERROR: Couldn't log deleted message by ${msg.author.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
@@ -140,20 +142,22 @@ client.on("userUpdate", (oldUser, newUser) => {
 client.on("messageUpdate", (oldMsg, newMsg) => {
   if (oldMsg.content != newMsg.content) {
     if (exports.messageLogsChannel) {
-      embed = new RichEmbed()
-        .setColor("#FF7C00")
-        .setTitle(`Edited Message in #${newMsg.channel.name}`)
-        .setAuthor(newMsg.author.tag, newMsg.author.avatarURL)
-        .addField("New message:", newMsg.content)
-        .addField("Old message:", oldMsg.content);
-      if (newMsg.attachments) {
-        newMsg.attachments.forEach(attachment => {
-          embed.addField("Attachment", attachment.url);
-        });
-        embed.setImage(newMsg.attachments[0]);
-        embed.addField("Date:", new Date());
+      if (oldMsg.author !== client.user) {
+        embed = new RichEmbed()
+          .setColor("#FF7C00")
+          .setTitle(`Edited Message in #${newMsg.channel.name}`)
+          .setAuthor(newMsg.author.tag, newMsg.author.avatarURL)
+          .addField("New message:", newMsg.content)
+          .addField("Old message:", oldMsg.content);
+        if (newMsg.attachments) {
+          newMsg.attachments.forEach(attachment => {
+            embed.addField("Attachment", attachment.url);
+          });
+          embed.setImage(newMsg.attachments[0]);
+          embed.addField("Date:", new Date());
+        }
+        exports.messageLogsChannel.send(embed);
       }
-      exports.messageLogsChannel.send(embed);
     } else {
       console.error(
         `ERROR: Couldn't log message edit by ${newUser.tag} because the message logs channel cannot be found. Please make sure Bentley has access to a channel named "message-logs".`
