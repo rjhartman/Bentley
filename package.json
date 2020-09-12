@@ -9,7 +9,7 @@
     "discord.js-commando": "^0.10.0",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "sqlite": "^3.0.3",
     "uuid": "^3.3.3"
   },
